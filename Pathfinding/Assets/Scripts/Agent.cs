@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using Grid;
 
 public class Agent : MonoBehaviour
 {
@@ -42,25 +43,25 @@ public class Agent : MonoBehaviour
         _pathIndex = 0;
     }
 
-    void ResetPath(List<Vector3> paths)
-    {
-        int storedCount = 0;
-        for (int i = 0; i < paths.Count; i++)
-        {
-            if (i > paths.Count - 1) return;
-            if (_paths[i] == paths[i]) storedCount++;
-        }
+    Vector3 ReturnDirection() { return (_positionToMove - transform.position).normalized; }
 
-        if(_pathIndex > storedCount) ResetPath();
-    }
+    bool IsEndOfPath() { return _paths.Count == 0 || _paths.Count - 1 < _pathIndex; }
 
     void Update()
     {
-        ResetPath(_paths);
-        _paths = FindPath(transform.position, _target.position);
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            ResetPath();
+            _paths = FindPath(transform.position, _target.position);
+        }
 
-        if (_paths.Count == 0 || _paths.Count - 1 < _pathIndex) return;
+        bool isEnd = IsEndOfPath();
+        if (isEnd == true) return;
+
         _positionToMove.Set(_paths[_pathIndex].x, transform.position.y, _paths[_pathIndex].z);
+
+        Vector3 dir = ReturnDirection();
+        _viewComponent.View(dir);
 
         float distance = Vector3.Distance(transform.position, _positionToMove);
         if(distance < 0.1f)
@@ -72,7 +73,8 @@ public class Agent : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (_paths.Count == 0)
+        bool isEnd = IsEndOfPath();
+        if (isEnd == true)
         {
             if(_animator.GetBool("IsRunning") == true)
                 _animator.SetBool("IsRunning", false);
@@ -82,9 +84,18 @@ public class Agent : MonoBehaviour
             if (_animator.GetBool("IsRunning") == false)
                 _animator.SetBool("IsRunning", true);
 
-            Vector3 dir = (_positionToMove - transform.position).normalized;
-            _viewComponent.View(dir);
+            Vector3 dir = ReturnDirection();
             _moveComponent.Move(dir);
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (Application.isPlaying == false) return;
+
+        for (int i = 0; i < _paths.Count; i++)
+        {
+            Gizmos.DrawCube(_paths[i], new Vector3(1, 1, 1));
         }
     }
 }

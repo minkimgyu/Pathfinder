@@ -39,7 +39,7 @@ namespace AI.Flock
 
         void Spawn()
         {
-            Pathfinder pathfinder = FindObjectOfType<Pathfinder>();
+            //Pathfinder pathfinder = FindObjectOfType<Pathfinder>();
 
             Vector3 spawnPoint = new Vector3();
 
@@ -56,9 +56,9 @@ namespace AI.Flock
                     );
 
                 newAgent.name = "Agent " + i;
-                newAgent.Initialize(pathfinder.FindPath, ReturnTargets, _agentCaptureRadius, 
-                    _agentMoveSpeed, _agentViewSpeed, _goToPathFollowerStateDistance, _goToFlockFollowerStateDistance);
-                _agents.Add(newAgent);
+                //newAgent.Initialize(pathfinder.FindPath, ReturnTargets, _agentCaptureRadius, 
+                //    _agentMoveSpeed, _agentViewSpeed, _goToPathFollowerStateDistance, _goToFlockFollowerStateDistance);
+                //_agents.Add(newAgent);
             }
 
             _agents[0].OnResetLeader();
