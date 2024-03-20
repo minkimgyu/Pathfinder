@@ -9,7 +9,7 @@ namespace AI.Flock
         [SerializeField] Vector3 _center = Vector3.zero;
         [SerializeField] float radius = 20;
 
-        public override Vector3 ReturnVelocity(List<FlockAgent> nearTr)
+        public override Vector3 ReturnVelocity(List<FlockAgent> nearAgents, List<Transform> nearObstacles)
         {
             Vector3 centerOffset = _center - transform.position;
             float t = centerOffset.magnitude / radius;

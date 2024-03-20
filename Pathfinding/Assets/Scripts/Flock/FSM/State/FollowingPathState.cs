@@ -12,7 +12,7 @@ public class FollowingPathState : State
 
     Timer _timer;
     float _minDistanceToPathPoint = 0.3f;
-    float _pathFindDelay = 5f; // 딜레이만큼 기다렸다가 다시 길찾기 시작
+    float _pathFindDelay = 0.5f; // 딜레이만큼 기다렸다가 다시 길찾기 시작
 
     List<Vector3> _paths;
     int _pathIndex = 0;

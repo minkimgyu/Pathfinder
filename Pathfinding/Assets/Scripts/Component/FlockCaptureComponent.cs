@@ -3,6 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using AI.Flock;
 
-public class FlockCaptureComponent : CaptureComponent<FlockAgent>
+public class FlockCaptureComponent : CircleCaptureComponent<FlockAgent>
 {
 }

@@ -2223,6 +2223,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _moveSpeed: 5
   _rotationSpeed: 3
+  _target: {fileID: 0}
 --- !u!114 &7560527064867658898
 MonoBehaviour:
   m_ObjectHideFlags: 0

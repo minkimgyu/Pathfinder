@@ -6,13 +6,16 @@ namespace AI.Flock
 {
     public class FollowBehavior : BaseBehavior
     {
-        Vector3 _pos;
+        [SerializeField] Transform _target;
 
-        public override Vector3 ReturnVelocity(List<FlockAgent> nearTr)
+        public override void Intialize(Transform target)
         {
-            return (_pos - transform.position).normalized * _weight;
+            _target = target;
         }
 
-        public override void ResetTargetPos(Vector3 pos) { _pos = pos; }
+        public override Vector3 ReturnVelocity(List<FlockAgent> nearAgents, List<Transform> nearObstacles)
+        {
+            return (_target.position - transform.position).normalized * _weight;
+        }
     }
 }

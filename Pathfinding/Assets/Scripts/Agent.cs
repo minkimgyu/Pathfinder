@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-using Grid;
+using Grid.Pathfinder;
+using System.Diagnostics;
 
 public class Agent : MonoBehaviour
 {
@@ -39,20 +40,36 @@ public class Agent : MonoBehaviour
 
     void ResetPath()
     {
+        if (_paths == null || _paths.Count == 0) return;
+
         _paths.Clear();
         _pathIndex = 0;
     }
 
     Vector3 ReturnDirection() { return (_positionToMove - transform.position).normalized; }
 
-    bool IsEndOfPath() { return _paths.Count == 0 || _paths.Count - 1 < _pathIndex; }
+    bool IsEndOfPath() 
+    {
+        return _paths == null || _paths.Count == 0 || _paths.Count - 1 < _pathIndex; 
+    }
 
     void Update()
     {
+
+
+
+
         if (Input.GetKeyDown(KeyCode.A))
         {
             ResetPath();
+
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
+
             _paths = FindPath(transform.position, _target.position);
+
+            watch.Stop();
+            UnityEngine.Debug.Log(watch.ElapsedMilliseconds + " ms");
         }
 
         bool isEnd = IsEndOfPath();
@@ -92,6 +109,8 @@ public class Agent : MonoBehaviour
     private void OnDrawGizmos()
     {
         if (Application.isPlaying == false) return;
+
+        if (_paths == null || _paths.Count == 0) return;
 
         for (int i = 0; i < _paths.Count; i++)
         {

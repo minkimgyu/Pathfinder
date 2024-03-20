@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Grid.Pathfinder;
 
 namespace AI.Flock
 {
@@ -23,7 +24,7 @@ namespace AI.Flock
         [Range(1f, 10f)]
         [SerializeField] float _agentCaptureRadius = 2f;
 
-        [Range(1f, 10f)]
+        [Range(1f, 100f)]
         [SerializeField] float _agentMoveSpeed = 3f;
 
         [Range(1f, 10f)]
@@ -35,11 +36,11 @@ namespace AI.Flock
         [Range(1f, 10f)]
         [SerializeField] float _goToFlockFollowerStateDistance = 1.5f;
 
-        void Start() => Spawn();
+        void Start() => Invoke("Spawn", 1f);
 
         void Spawn()
         {
-            //Pathfinder pathfinder = FindObjectOfType<Pathfinder>();
+            Pathfinder pathfinder = FindObjectOfType<Pathfinder>();
 
             Vector3 spawnPoint = new Vector3();
 
@@ -56,13 +57,12 @@ namespace AI.Flock
                     );
 
                 newAgent.name = "Agent " + i;
-                //newAgent.Initialize(pathfinder.FindPath, ReturnTargets, _agentCaptureRadius, 
-                //    _agentMoveSpeed, _agentViewSpeed, _goToPathFollowerStateDistance, _goToFlockFollowerStateDistance);
-                //_agents.Add(newAgent);
+                newAgent.Initialize(_targets[0], _agentCaptureRadius, _agentMoveSpeed, _agentViewSpeed);
+                _agents.Add(newAgent);
             }
 
-            _agents[0].OnResetLeader();
-            ChangeLeader(0);
+            //_agents[0].OnResetLeader();
+            //ChangeLeader(0);
         }
 
         public List<Transform> ReturnTargets() { return _targets; }
@@ -71,7 +71,7 @@ namespace AI.Flock
             FlockAgent leaderAgent = _agents[index];
             for (int i = 0; i < _agents.Count; i++)
             {
-                _agents[i].ResetLeader(leaderAgent);
+                //_agents[i].ResetLeader(leaderAgent);
             }
         }
 

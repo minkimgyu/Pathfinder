@@ -13,8 +13,13 @@ public class MoveComponent : MonoBehaviour
         _rigid = GetComponent<Rigidbody>();
     }
 
+    public Vector3 ReturnVelocity()
+    {
+        return _rigid.velocity;
+    }
+
     public void Move(Vector3 dir)
     {
-        _rigid.MovePosition(_rigid.position + dir * _speed * Time.deltaTime);
+        _rigid.AddForce(dir * _speed, ForceMode.Force);
     }
 }

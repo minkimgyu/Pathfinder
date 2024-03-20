@@ -8,71 +8,69 @@ namespace AI.Flock
     public class FlockAgent : MonoBehaviour
     {
         [SerializeField] BaseBehavior[] _baseBehaviors;
-        FollowComponent _followComponent;
+
+        FlockCaptureComponent _flockCaptureComponent;
+        ObstacleCaptureComponent _obstacleCaptureComponent;
+        ViewComponent _viewComponent;
+        MoveComponent _moveComponent;
+
+        [SerializeField] float _speed;
+
         Animator _animator;
 
-        public bool IsLeader { get { return _followComponent.IsLeader(); } }
+        Vector3 _storedVelocity = Vector3.zero;
 
-        public void Initialize(Func<Vector3, Vector3, List<Vector3>> OnFindPathRequested, Func<List<Transform>> OnReturnTargetsRequested, 
-            float captureRadius, float agentMoveSpeed, float agentViewSpeed, float goToPathFollowerStateDistance, float goToFlockFollowerStateDistance)
+        public void Initialize(Transform target, float captureRadius, float agentMoveSpeed, float agentViewSpeed)
         {
-            FlockCaptureComponent captureComponent = GetComponentInChildren<FlockCaptureComponent>();
-            captureComponent.Initialize(captureRadius);
+            _flockCaptureComponent = GetComponentInChildren<FlockCaptureComponent>();
+            _flockCaptureComponent.Initialize(captureRadius);
 
-            MoveComponent moveComponent = GetComponent<MoveComponent>();
-            moveComponent.Initialize(agentMoveSpeed);
+            _obstacleCaptureComponent = GetComponentInChildren<ObstacleCaptureComponent>();
+            _obstacleCaptureComponent.Initialize("Obstacle");
 
-            ViewComponent viewComponent = GetComponent<ViewComponent>();
-            viewComponent.Initialize(agentViewSpeed);
+            _moveComponent = GetComponent<MoveComponent>();
+            _moveComponent.Initialize(agentMoveSpeed);
 
-            _followComponent = GetComponent<FollowComponent>();
-            _followComponent.Initialize(moveComponent, viewComponent, OnFindPathRequested, OnReturnTargetsRequested, 
-                captureComponent.ReturnNearComponents, _baseBehaviors, goToPathFollowerStateDistance, goToFlockFollowerStateDistance);
+            _viewComponent = GetComponent<ViewComponent>();
+            _viewComponent.Initialize(agentViewSpeed);
 
             _animator = GetComponent<Animator>();
-        }
 
-        public void OnResetLeader()
-        {
-            _followComponent.OnResetLeader();
-        }
-
-        public void ResetLeader(FlockAgent agent)
-        {
-            _followComponent.ResetLeader(agent);
+            for (int i = 0; i < _baseBehaviors.Length; i++)
+            {
+                _baseBehaviors[i].Intialize(target);
+            }
         }
 
         private void Update()
         {
-            _followComponent.OnUpdate();
+            Vector3 velocity = Vector3.zero;
 
-            //_followComponent.OnResetLeader();
+            List<FlockAgent> agents = _flockCaptureComponent.ReturnNearComponents();
+            List<Transform> obstacles = _obstacleCaptureComponent.ReturnNearComponents();
 
-            //_velocity.Set(0, 0, 0); // √ ±‚»≠
+            for (int i = 0; i < _baseBehaviors.Length; i++)
+            {
+                velocity += _baseBehaviors[i].ReturnVelocity(agents, obstacles);
+            }
 
-            //if (_velocity == Vector3.zero)
-            //{
-            //    if (_animator.GetBool("IsRunning") == true)
-            //        _animator.SetBool("IsRunning", false);
-            //}
-            //else
-            //{
-            //    if (_animator.GetBool("IsRunning") == false)
-            //        _animator.SetBool("IsRunning", true);
-            //}
+            if (velocity == Vector3.zero)
+            {
+                if (_animator.GetBool("IsRunning") == true)
+                    _animator.SetBool("IsRunning", false);
+            }
+            else
+            {
+                if (_animator.GetBool("IsRunning") == false)
+                    _animator.SetBool("IsRunning", true);
+            }
+
+            _storedVelocity = Vector3.Lerp(_storedVelocity, velocity, Time.deltaTime);
+
+            Debug.DrawRay(transform.position, _storedVelocity, Color.black);
+
+            _viewComponent.View(new Vector3(velocity.x, 0, velocity.z));
+            _moveComponent.Move(new Vector3(_storedVelocity.x, 0, _storedVelocity.z) * _speed);
         }
-
-        private void FixedUpdate()
-        {
-            _followComponent.OnFixedUpdate();
-        }
-
-        //private void OnDrawGizmos()
-        //{
-        //    if (Application.isPlaying == false || _velocity == null) return;
-
-        //    Gizmos.color = Color.blue;
-        //    Gizmos.DrawLine(transform.position, transform.position + _velocity.normalized);
-        //}
     }
 }

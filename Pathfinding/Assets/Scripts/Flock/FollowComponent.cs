@@ -63,6 +63,7 @@ namespace AI.Flock
 
         public void OnResetLeader()
         {
+            print("OnResetLeader");
             OnStateChange(State.Leader);
         }
 

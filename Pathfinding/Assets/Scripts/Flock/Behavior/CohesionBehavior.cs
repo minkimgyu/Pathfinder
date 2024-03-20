@@ -6,17 +6,17 @@ namespace AI.Flock
 {
     public class CohesionBehavior : BaseBehavior
     {
-        public override Vector3 ReturnVelocity(List<FlockAgent> nearTr)
+        public override Vector3 ReturnVelocity(List<FlockAgent> nearAgents, List<Transform> nearObstacles)
         {
-            if (nearTr.Count == 0) return Vector3.zero;
+            if (nearAgents.Count == 0) return Vector3.zero;
 
             Vector3 combinedPos = new Vector3();
-            for (int i = 0; i < nearTr.Count; i++)
+            for (int i = 0; i < nearAgents.Count; i++)
             {
-                combinedPos += nearTr[i].transform.position;
+                combinedPos += nearAgents[i].transform.position;
             }
 
-            combinedPos /= nearTr.Count;
+            combinedPos /= nearAgents.Count;
             return (combinedPos - transform.position).normalized * _weight;
         }
     }

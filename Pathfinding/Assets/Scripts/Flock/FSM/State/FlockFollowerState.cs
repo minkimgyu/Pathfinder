@@ -48,8 +48,8 @@ public class FlockFollowerState : State
         List<FlockAgent> agents = OnReturnAgentsRequested();
         for (int i = 0; i < _baseBehaviors.Length; i++)
         {
-            _baseBehaviors[i].ResetTargetPos(targetPos);
-            velocity += _baseBehaviors[i].ReturnVelocity(agents);
+            //_baseBehaviors[i].ResetTargetPos(targetPos);
+            //velocity += _baseBehaviors[i].ReturnVelocity(agents);
         }
 
         Vector3 nomalVec = new Vector3(velocity.x, 0, velocity.z).normalized;
