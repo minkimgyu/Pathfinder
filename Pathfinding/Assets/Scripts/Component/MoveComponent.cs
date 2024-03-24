@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class MoveComponent : MonoBehaviour
 {
@@ -20,6 +21,7 @@ public class MoveComponent : MonoBehaviour
 
     public void Move(Vector3 dir)
     {
-        _rigid.AddForce(dir * _speed, ForceMode.Force);
+        //_rigid.MovePosition(_rigid.position + dir * _speed * Time.deltaTime);
+        _rigid.velocity = dir * _speed;
     }
 }

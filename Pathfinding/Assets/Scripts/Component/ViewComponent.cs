@@ -13,6 +13,7 @@ public class ViewComponent : MonoBehaviour
 
     public void View(Vector3 dir)
     {
+        dir.Set(dir.x, 0, dir.z);
         transform.forward = Vector3.Lerp(transform.forward, dir, Time.smoothDeltaTime * _speed);
     }
 }

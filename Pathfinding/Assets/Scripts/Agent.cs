@@ -63,7 +63,7 @@ public class Agent : MonoBehaviour
         {
             ResetPath();
 
-            Stopwatch watch = new Stopwatch();
+            System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
             watch.Start();
 
             _paths = FindPath(transform.position, _target.position);

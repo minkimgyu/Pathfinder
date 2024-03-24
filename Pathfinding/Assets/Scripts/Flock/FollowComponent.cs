@@ -77,10 +77,5 @@ namespace AI.Flock
         {
             _fsm.OnUpdate();
         }
-
-        public void OnFixedUpdate()
-        {
-            _fsm.OnFixedUpdate();
-        }
     }
 }

@@ -18,8 +18,8 @@ TagManager:
   - CanOverlap
   - CaptureCollider
   - FlockAgent
-  - 
-  - 
+  - Noise
+  - Target
   - 
   - 
   - 

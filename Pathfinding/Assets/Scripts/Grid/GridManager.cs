@@ -135,17 +135,17 @@ namespace Grid
             return closeGridIndex;
         }
 
-        public Vector3 ReturnClampedRangePosition(Vector3 worldPos)
+        public Vector3 ReturnClampedRange(Vector3 pos)
         {
             Vector3 bottomLeftPos = ReturnNode(0, 0).Pos;
             Vector3 topRightPos = ReturnNode(_sizeOfGrid.x - 1, _sizeOfGrid.z - 1).Pos;
 
             // 반올림하고 범위 안에 맞춰줌
             // 이 부분은 GridSize 바뀌면 수정해야함
-            float xPos = Mathf.Clamp(worldPos.x, bottomLeftPos.x, topRightPos.x);
-            float zPos = Mathf.Clamp(worldPos.z, bottomLeftPos.z, topRightPos.z);
+            float xPos = Mathf.Clamp(pos.x, bottomLeftPos.x, topRightPos.x);
+            float zPos = Mathf.Clamp(pos.z, bottomLeftPos.z, topRightPos.z);
 
-            return new Vector3(xPos, worldPos.y, zPos);
+            return new Vector3(xPos, pos.y, zPos);
         }
 
         int ReturnCloestNodeIndexInYAxis(List<Node> nodes, float yPos)
@@ -170,9 +170,31 @@ namespace Grid
             return index;
         }
 
+        public Vector3 ReturnNodePos(Vector3 worldPos)
+        {
+            Vector3 clampedPos = ReturnClampedRange(worldPos);
+            Vector3 bottomLeftPos = ReturnNode(0, 0).Pos;
+
+            int xIndex = Mathf.RoundToInt((clampedPos.x - bottomLeftPos.x) / _nodeSize); // 인덱스이므로 1 빼준다.
+            int zIndex = Mathf.RoundToInt((clampedPos.z - bottomLeftPos.z) / _nodeSize);
+
+            List<Node> currentNode = _simpleNodes[xIndex, zIndex];
+            
+            if (currentNode.Count == 0) return Vector3Int.zero;
+            else if (currentNode.Count == 1)
+            {
+                return _simpleNodes[xIndex, zIndex][0].SurfacePos;
+            }
+            else
+            {
+                int yIndex = ReturnCloestNodeIndexInYAxis(currentNode, worldPos.y);
+                return _simpleNodes[xIndex, zIndex][yIndex].SurfacePos;
+            }
+        }
+
         public Vector3Int ReturnNodeIndex(Vector3 worldPos)
         {
-            Vector3 clampedPos = ReturnClampedRangePosition(worldPos);
+            Vector3 clampedPos = ReturnClampedRange(worldPos);
             Vector3 bottomLeftPos = ReturnNode(0, 0).Pos;
 
             int xIndex = Mathf.RoundToInt((clampedPos.x - bottomLeftPos.x) / _nodeSize); // 인덱스이므로 1 빼준다.

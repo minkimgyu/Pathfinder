@@ -9,7 +9,7 @@ namespace FSM
     {
         public override void CheckStateChange() { }
 
-        public override void OnStateFixedUpdate() { }
+        public override void OnReceiveNoise() { }
 
 
         public override void OnStateEnter() { }
@@ -23,7 +23,7 @@ namespace FSM
     {
         public abstract void CheckStateChange();
 
-        public abstract void OnStateFixedUpdate();
+        public abstract void OnReceiveNoise();
 
 
         public abstract void OnStateEnter();
@@ -59,10 +59,10 @@ namespace FSM
             _currentState.CheckStateChange();
         }
 
-        public void OnFixedUpdate()
+        public void OnNoiseReceived()
         {
             if (_currentState == null) return;
-            _currentState.OnStateFixedUpdate();
+            _currentState.OnReceiveNoise();
         }
 
         public bool RevertToPreviousState()
@@ -91,12 +91,12 @@ namespace FSM
         {
             if (_stateDictionary.ContainsValue(state) == false) return false;
 
-            if (_currentState == state) // ���� State�� ��ȯ���� ���ϰ� ����
+            if (_currentState == state) 
             {
                 return false;
             }
 
-            if (_currentState != null) //���°� �ٲ�� ����, ���� ������ Exit�� ȣ��
+            if (_currentState != null)
                 _currentState.OnStateExit();
 
             _previousState = _currentState;
@@ -104,7 +104,7 @@ namespace FSM
             _currentState = state;
 
 
-            if (_currentState != null) //�� ������ Enter�� ȣ���Ѵ�.
+            if (_currentState != null)
             {
                 _currentState.OnStateEnter();
             }
