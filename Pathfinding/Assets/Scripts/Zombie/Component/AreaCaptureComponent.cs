@@ -34,7 +34,7 @@ public class AreaCaptureComponent : BaseCaptureComponent
         return _capturedTransforms.Contains(other.transform);
     }
 
-    bool CanRaycastTarget(Transform target)
+    bool canRaycastTarget(Transform target)
     {
         Vector3 dir = (target.position - _sightPoint.position).normalized;
 
@@ -46,7 +46,7 @@ public class AreaCaptureComponent : BaseCaptureComponent
         else return false;
     }
 
-    bool IsInAngle(float angle) { return angle <= _captureAngle / 2 && -_captureAngle / 2 <= angle; }
+    bool isInAngle(float angle) { return angle <= _captureAngle / 2 && -_captureAngle / 2 <= angle; }
 
     // ReturnTargetInSight 사용시 IsTargetInSight 우선 사용
     public Transform ReturnTargetInSight()
@@ -62,11 +62,11 @@ public class AreaCaptureComponent : BaseCaptureComponent
         {
             if (_capturedTransforms[i] == null) continue;
 
-            float angle = ReturnAngleBetween(_capturedTransforms[i].transform.position);
-            bool inInAngle = IsInAngle(angle);
+            float angle = returnAngleBetween(_capturedTransforms[i].transform.position);
+            bool inInAngle = isInAngle(angle);
             if (inInAngle == false) continue;
 
-            bool canRaycast = CanRaycastTarget(_capturedTransforms[i].transform);
+            bool canRaycast = canRaycastTarget(_capturedTransforms[i].transform);
             if (canRaycast == false) continue;
 
             _storedTarget = _capturedTransforms[i].transform;
@@ -76,7 +76,7 @@ public class AreaCaptureComponent : BaseCaptureComponent
         return false;
     }
 
-    float ReturnAngleBetween(Vector3 targetPos)
+    float returnAngleBetween(Vector3 targetPos)
     {
         Vector3 dir = (new Vector3(targetPos.x, transform.position.y, targetPos.z) - transform.position).normalized;
         float angle = Vector3.Angle(transform.forward, dir);

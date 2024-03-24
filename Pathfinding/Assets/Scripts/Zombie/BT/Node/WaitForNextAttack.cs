@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BehaviorTree.Utility
+namespace BehaviorTree.Nodes
 {
     public class WaitForNextAttack : Node
     {

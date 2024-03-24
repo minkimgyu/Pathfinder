@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-namespace BehaviorTree.Utility
+namespace BehaviorTree.Nodes
 {
     public class Attack : Node
     {

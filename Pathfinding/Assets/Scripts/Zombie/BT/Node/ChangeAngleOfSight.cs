@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BehaviorTree.Utility
+namespace BehaviorTree.Nodes
 {
     public class ChangeAngleOfSight : Node
     {
@@ -24,7 +24,7 @@ namespace BehaviorTree.Utility
             _angle = 0;
         }
 
-        void ResetAngle()
+        void resetAngle()
         {
             if (_angle >= _angleOffset) state = State.DownAngle;
             else if (_angle <= -_angleOffset) state = State.UpAngle;
@@ -42,7 +42,7 @@ namespace BehaviorTree.Utility
 
         public override NodeState Evaluate()
         {
-            ResetAngle();
+            resetAngle();
             _captureTransform.localRotation = Quaternion.Euler(0, _angle, 0);
             return NodeState.SUCCESS;
         }

@@ -4,7 +4,7 @@ using UnityEngine;
 using FSM;
 using System;
 using BehaviorTree;
-using BehaviorTree.Utility;
+using BehaviorTree.Nodes;
 using Tree = BehaviorTree.Tree;
 using Node = BehaviorTree.Node;
 using AI;
@@ -15,8 +15,8 @@ public class IdleState : State
     Action<Zombie.State> SetState;
     Func<bool> IsTargetInSight;
 
-    public IdleState(Action<Zombie.State> SetState, Transform captureTransform, Func<bool> IsTargetInSight, float angleOffset, float angleChangeAmount, int wanderOffset,
-        float stateChangeDelay, Transform myTrasform, Func<Vector3, Vector3> ReturnNodePos, Action<Vector3, bool> FollowPath, Action<Vector3> View)
+    public IdleState(Action<Zombie.State> SetState, Transform captureTransform, Func<bool> IsTargetInSight, float angleOffset, float angleChangeAmount, 
+        int wanderOffset, float stateChangeDelay, Transform myTrasform, Func<Vector3, Vector3> ReturnNodePos, Action<Vector3, bool> FollowPath, Action<Vector3> View)
     {
         this.SetState = SetState;
         this.IsTargetInSight = IsTargetInSight;
@@ -39,7 +39,7 @@ public class IdleState : State
                     (
                         new List<Node>()
                         {
-                            new WaitForNextStateChange(stateChangeDelay),
+                            new WaitForStateChange(stateChangeDelay),
                             changeState,
                             // Wander에 이벤트를 보내는 방식으로 방향을 돌려준다.
                         }

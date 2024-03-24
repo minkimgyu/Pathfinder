@@ -2,14 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BehaviorTree.Utility
+namespace BehaviorTree.Nodes
 {
-    public class WaitForNextStateChange : Node
+    public class WaitForStateChange : Node
     {
         StopwatchTimer _stopwatchTimer;
         float _delayDuration = 0.5f;
 
-        public WaitForNextStateChange(float delayDuration)
+        public WaitForStateChange(float delayDuration)
         {
             _stopwatchTimer = new StopwatchTimer();
             _delayDuration = delayDuration;

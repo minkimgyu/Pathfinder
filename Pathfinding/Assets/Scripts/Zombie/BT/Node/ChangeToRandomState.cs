@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 using Random = UnityEngine.Random;
 
-namespace BehaviorTree.Utility
+namespace BehaviorTree.Nodes
 {
     public class ChangeToRandomState : Node
     {

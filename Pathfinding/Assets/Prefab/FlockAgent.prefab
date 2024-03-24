@@ -2493,7 +2493,7 @@ MonoBehaviour:
   - {fileID: 5466303954819422749}
   - {fileID: 7283565071567794186}
   - {fileID: -1154320407942784190}
-  _speed: 1.5
+  _speed: 4
 --- !u!114 &1217540159276778931
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2532,7 +2532,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 001f4f331faa95145af41ceb3b685e47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _weight: 1.2
+  _weight: 1.5
 --- !u!114 &-1154320407942784190
 MonoBehaviour:
   m_ObjectHideFlags: 0

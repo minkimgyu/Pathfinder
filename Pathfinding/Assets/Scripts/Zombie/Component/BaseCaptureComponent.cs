@@ -14,6 +14,7 @@ abstract public class BaseCaptureComponent : MonoBehaviour
 
     public virtual void Initialize(float radius, int maxQueueSize, Action OnNoiseReceived) { }
     public virtual void Initialize(float radius, float angle) { }
+    public virtual void Initialize(float radius) { }
 
     public void ModifyCaptureRadius(float radius)
     {

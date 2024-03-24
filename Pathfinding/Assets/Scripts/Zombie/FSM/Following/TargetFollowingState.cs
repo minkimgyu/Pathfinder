@@ -4,7 +4,7 @@ using UnityEngine;
 using FSM;
 using System;
 using BehaviorTree;
-using BehaviorTree.Utility;
+using BehaviorTree.Nodes;
 using Tree = BehaviorTree.Tree;
 using Node = BehaviorTree.Node;
 using AI;

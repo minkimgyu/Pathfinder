@@ -21,7 +21,7 @@ public class MoveComponent : MonoBehaviour
 
     public void Move(Vector3 dir)
     {
-        //_rigid.MovePosition(_rigid.position + dir * _speed * Time.deltaTime);
+        //_rigid.MovePosition(_rigid.position + dir * Time.deltaTime);
         _rigid.velocity = dir * _speed;
     }
 }
