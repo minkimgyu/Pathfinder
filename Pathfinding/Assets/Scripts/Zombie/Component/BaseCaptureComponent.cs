@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-abstract public class BaseCaptureComponent : MonoBehaviour
+abstract public class BaseCaptureComponent<T> : MonoBehaviour where T : ITarget
 {
-
     [SerializeField] protected float _captureRadius;
 
     [SerializeField] SphereCollider _captureCollider;
     [SerializeField] BaseDrawer _sphereDrawer;
     [SerializeField] LayerMask _layerMask;
+    [SerializeField] TargetType _targetType;
 
     public virtual void Initialize(float radius, int maxQueueSize, Action OnNoiseReceived) { }
     public virtual void Initialize(float radius, float angle) { }
@@ -22,11 +22,11 @@ abstract public class BaseCaptureComponent : MonoBehaviour
         OnModifyData();
     }
 
-    protected virtual void OnTargetEnter(Collider other) { }
+    protected virtual void OnTargetEnter(T target) { }
 
-    protected virtual void OnTargetExit(Collider other) { }
+    protected virtual void OnTargetExit(T target) { }
 
-    protected abstract bool IsAlreadyContaining(Collider other);
+    protected abstract bool IsAlreadyContaining(T target);
 
     protected bool IsRightLayer(Collider other)
     {
@@ -36,14 +36,26 @@ abstract public class BaseCaptureComponent : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (IsRightLayer(other) == false || IsAlreadyContaining(other) == true) return;
-        OnTargetEnter(other);
+        if (IsRightLayer(other) == false) return;
+
+        T component =  other.GetComponent<T>();
+        if (component == null || component.IsSameType(_targetType)) return;
+
+        if (IsAlreadyContaining(component) == true) return;
+
+        OnTargetEnter(component);
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (IsRightLayer(other) == false || IsAlreadyContaining(other) == false) return;
-        OnTargetExit(other);
+        if (IsRightLayer(other) == false) return;
+
+        T component = other.GetComponent<T>();
+        if (component == null || component.IsSameType(_targetType)) return;
+
+        if (IsAlreadyContaining(component) == true) return;
+
+        OnTargetExit(component);
     }
 
     protected virtual void OnModifyData()

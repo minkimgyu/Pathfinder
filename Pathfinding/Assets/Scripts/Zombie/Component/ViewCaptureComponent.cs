@@ -2,36 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AreaCaptureComponent : BaseCaptureComponent
+public class ViewCaptureComponent : MovableTargetCaptureComponent<ITarget>
 {
     [SerializeField] float _captureAngle = 90;
 
     [SerializeField] BaseDrawer _circularSectorDrawer;
     [SerializeField] Transform _sightPoint;
 
-    [SerializeField] List<Transform> _capturedTransforms = new List<Transform>();
-
-    [SerializeField] Transform _storedTarget;
+    [SerializeField] ITarget _storedTarget;
 
     public override void Initialize(float radius, float angle)
     {
         _captureRadius = radius;
         _captureAngle = angle;
-    }
-
-    protected override void OnTargetEnter(Collider other)
-    {
-        _capturedTransforms.Add(other.transform);
-    }
-
-    protected override void OnTargetExit(Collider other)
-    {
-        _capturedTransforms.Remove(other.transform);
-    }
-
-    protected override bool IsAlreadyContaining(Collider other)
-    {
-        return _capturedTransforms.Contains(other.transform);
     }
 
     bool canRaycastTarget(Transform target)
@@ -49,27 +32,26 @@ public class AreaCaptureComponent : BaseCaptureComponent
     bool isInAngle(float angle) { return angle <= _captureAngle / 2 && -_captureAngle / 2 <= angle; }
 
     // ReturnTargetInSight 사용시 IsTargetInSight 우선 사용
-    public Transform ReturnTargetInSight()
-    {
-        return _storedTarget;
-    }
+    public ITarget ReturnTargetInSight() { return _storedTarget; }
 
     public bool IsTargetInSight()
     {
-        if (_capturedTransforms.Count == 0) return false;
+        if (_capturedTargets.Count == 0) return false;
 
-        for (int i = 0; i < _capturedTransforms.Count; i++)
+        for (int i = 0; i < _capturedTargets.Count; i++)
         {
-            if (_capturedTransforms[i] == null) continue;
+            if (_capturedTargets[i] == null) continue;
 
-            float angle = returnAngleBetween(_capturedTransforms[i].transform.position);
+            Transform targetTransform = _capturedTargets[i].ReturnTransform();
+
+            float angle = returnAngleBetween(targetTransform.position);
             bool inInAngle = isInAngle(angle);
             if (inInAngle == false) continue;
 
-            bool canRaycast = canRaycastTarget(_capturedTransforms[i].transform);
+            bool canRaycast = canRaycastTarget(targetTransform);
             if (canRaycast == false) continue;
 
-            _storedTarget = _capturedTransforms[i].transform;
+            _storedTarget = _capturedTargets[i];
             return true;
         }
 

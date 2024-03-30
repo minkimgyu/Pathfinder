@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class NoiseListener : BaseCaptureComponent
+public class NoiseListener : BaseCaptureComponent<ITarget>
 {
     Queue<Vector3> _noiseQueue = new Queue<Vector3>();
     Action OnNoiseReceived;
@@ -16,10 +16,12 @@ public class NoiseListener : BaseCaptureComponent
         this.OnNoiseReceived = OnNoiseReceived;
     }
 
-    protected override bool IsAlreadyContaining(Collider other)
+    protected override bool IsAlreadyContaining(ITarget target)
     {
         if (IsQueueEmpty() == true) return false;
-        return _noiseQueue.Contains(other.transform.position);
+
+        Transform targetTransform = target.ReturnTransform();
+        return _noiseQueue.Contains(targetTransform.position);
     }
 
     public void ClearAllNoise()
@@ -41,11 +43,12 @@ public class NoiseListener : BaseCaptureComponent
         return _noiseQueue.Count > _maxQueueSize;
     }
 
-    protected override void OnTargetEnter(Collider other)
+    protected override void OnTargetEnter(ITarget target)
     {
         if(NowOverMaxQueueSize()) _noiseQueue.Dequeue(); // 최대 크기를 넘기면 Queue에서 빼줌
 
-        _noiseQueue.Enqueue(other.transform.position);
+        Transform targetTransform = target.ReturnTransform();
+        _noiseQueue.Enqueue(targetTransform.position);
         OnNoiseReceived?.Invoke();
     }
 }

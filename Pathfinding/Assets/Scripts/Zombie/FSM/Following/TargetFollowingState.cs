@@ -18,6 +18,8 @@ public class TargetFollowingState : State
 
     Func<bool> IsTargetInSight;
 
+    FollowFSM _followFSM;
+
     public TargetFollowingState(Action<Zombie.State> SetState, Action<float> ModifyCaptureRadius, float additiveCaptureRadius,  Func<bool> IsTargetInSight, Transform myTrasform, 
         Func<Transform> ReturnTargetInSight, float canAttackRange, float delayDuration, Transform attackPoint, float attackRadius, 
         LayerMask attackLayer, Action<Vector3, bool> FollowPath, Action<string> ResetAnimatorTrigger, Action<string, bool> ResetAnimatorBool)
@@ -27,6 +29,8 @@ public class TargetFollowingState : State
         _additiveCaptureRadius = additiveCaptureRadius;
 
         this.IsTargetInSight = IsTargetInSight;
+
+        _followFSM = new FollowFSM(ReturnTargetInSight, FollowPath);
 
         _bt = new Tree();
         List<Node> _childNodes;
@@ -52,13 +56,18 @@ public class TargetFollowingState : State
                             ),
                          }
                      ),
-                     new Follow(ReturnTargetInSight, FollowPath)
+                     _followFSM
                 }
             )
         };
 
         Node rootNode = new Selector(_childNodes);
         _bt.SetUp(rootNode);
+    }
+
+    public FollowFSM.State ReturnFollowState()
+    {
+        return _followFSM.ReturnState();
     }
 
     public override void CheckStateChange()
