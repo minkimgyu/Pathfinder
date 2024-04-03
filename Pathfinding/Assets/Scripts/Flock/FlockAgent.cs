@@ -29,7 +29,7 @@ namespace AI.Flock
             _obstacleCaptureComponent.Initialize("Obstacle");
 
             _moveComponent = GetComponent<MoveComponent>();
-            _moveComponent.Initialize(agentMoveSpeed);
+            //_moveComponent.Initialize(agentMoveSpeed);
 
             _viewComponent = GetComponent<ViewComponent>();
             _viewComponent.Initialize(agentViewSpeed);

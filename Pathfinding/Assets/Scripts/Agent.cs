@@ -27,7 +27,7 @@ public class Agent : MonoBehaviour
         _animator = GetComponent<Animator>();
 
         _moveComponent = GetComponent<MoveComponent>();
-        _moveComponent.Initialize(_moveSpeed);
+        //_moveComponent.Initialize(_moveSpeed);
 
         _viewComponent = GetComponent<ViewComponent>();
         _viewComponent.Initialize(_rotationSpeed);
