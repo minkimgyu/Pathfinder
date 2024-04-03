@@ -9,10 +9,10 @@ namespace BehaviorTree.Nodes
     {
         float _range;
         Transform _myTransform;
-        Func<Transform> ReturnTargetInSight;
+        Func<ITarget> ReturnTargetInSight;
         Action<string, bool> ResetAnimatorBool;
 
-        public IsCloseToTarget(Transform myTransform, Func<Transform> ReturnTargetInSight, float range, Action<string, bool> ResetAnimatorBool)
+        public IsCloseToTarget(Transform myTransform, Func<ITarget> ReturnTargetInSight, float range, Action<string, bool> ResetAnimatorBool)
         {
             this.ReturnTargetInSight = ReturnTargetInSight;
             this.ResetAnimatorBool = ResetAnimatorBool;
@@ -22,10 +22,10 @@ namespace BehaviorTree.Nodes
         }
         public override NodeState Evaluate()
         {
-            Transform target = ReturnTargetInSight();
+            ITarget target = ReturnTargetInSight();
             if (target == null) return NodeState.FAILURE;
 
-            float distanceFromTarget = Vector3.Distance(_myTransform.position, target.position);
+            float distanceFromTarget = Vector3.Distance(_myTransform.position, target.ReturnPos());
             if(distanceFromTarget < _range)
             {
                 ResetAnimatorBool?.Invoke("IsRunning", false);

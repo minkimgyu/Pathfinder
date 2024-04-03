@@ -19,18 +19,17 @@ public class NoiseTrackingState : State
 
     Vector3 _noisePos;
 
-    public NoiseTrackingState(Action<Zombie.State> SetState, Func<bool> IsTargetInSight, Func<bool> IsQueueEmpty, Action ClearAllNoise, 
-        Func<Vector3> ReturnFrontNoise, Action<Vector3, bool> FollowPath, Func<bool> IsFollowingFinish)
+    public NoiseTrackingState(NoiseTrackingStateParameter parameter)
     {
-        this.IsTargetInSight = IsTargetInSight;
+        IsTargetInSight = parameter.IsTargetInSight;
 
-        this.SetState = SetState;
-        this.ReturnFrontNoise = ReturnFrontNoise;
-        this.IsQueueEmpty = IsQueueEmpty;
-        this.ClearAllNoise = ClearAllNoise;
+        SetState = parameter.SetState;
+        ReturnFrontNoise = parameter.ReturnFrontNoise;
+        IsQueueEmpty = parameter.IsQueueEmpty;
+        ClearAllNoise = parameter.ClearAllNoise;
 
-        this.FollowPath = FollowPath;
-        this.IsFollowingFinish = IsFollowingFinish;
+       FollowPath = parameter.FollowPath;
+       IsFollowingFinish = parameter.IsFollowingFinish;
     }
 
     public override void OnStateEnter()

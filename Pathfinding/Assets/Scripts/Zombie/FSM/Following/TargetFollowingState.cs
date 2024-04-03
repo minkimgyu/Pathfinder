@@ -20,17 +20,14 @@ public class TargetFollowingState : State
 
     FollowFSM _followFSM;
 
-    public TargetFollowingState(Action<Zombie.State> SetState, Action<float> ModifyCaptureRadius, float additiveCaptureRadius,  Func<bool> IsTargetInSight, Transform myTrasform, 
-        Func<Transform> ReturnTargetInSight, float canAttackRange, float delayDuration, Transform attackPoint, float attackRadius, 
-        LayerMask attackLayer, Action<Vector3, bool> FollowPath, Action<string> ResetAnimatorTrigger, Action<string, bool> ResetAnimatorBool)
+    public TargetFollowingState(TargetFollowingStateParameter parameter)
     {
-        this.SetState = SetState;
-        this.ModifyCaptureRadius = ModifyCaptureRadius;
-        _additiveCaptureRadius = additiveCaptureRadius;
+        SetState = parameter.SetState;
+        ModifyCaptureRadius = parameter.ModifyCaptureRadius;
+        IsTargetInSight = parameter.IsTargetInSight;
 
-        this.IsTargetInSight = IsTargetInSight;
-
-        _followFSM = new FollowFSM(ReturnTargetInSight, FollowPath);
+        _additiveCaptureRadius = parameter.additiveCaptureRadius;
+        _followFSM = new FollowFSM(parameter.ReturnTargetInSight, parameter.FollowPath);
 
         _bt = new Tree();
         List<Node> _childNodes;
@@ -44,13 +41,13 @@ public class TargetFollowingState : State
                      (
                          new List<Node>()
                          {
-                            new IsCloseToTarget(myTrasform, ReturnTargetInSight, canAttackRange, ResetAnimatorBool),
+                            new IsCloseToTarget(parameter.myTrasform, parameter.ReturnTargetInSight, parameter.canAttackRange, parameter.ResetAnimatorBool),
                             new Sequencer
                             (
                                 new List<Node>()
                                 {
-                                    new WaitForNextAttack(delayDuration),
-                                    new Attack(attackPoint, attackRadius, attackLayer, ResetAnimatorTrigger),
+                                    new WaitForNextAttack(parameter.delayDuration),
+                                    new Attack(parameter.attackPoint, parameter.attackRadius, parameter.attackLayer, parameter.ResetAnimatorTrigger),
                                     // Wander에 이벤트를 보내는 방식으로 방향을 돌려준다.
                                 }
                             ),

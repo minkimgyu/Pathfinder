@@ -15,13 +15,13 @@ public class IdleState : State
     Action<Zombie.State> SetState;
     Func<bool> IsTargetInSight;
 
-    public IdleState(Action<Zombie.State> SetState, Transform captureTransform, Func<bool> IsTargetInSight, float angleOffset, float angleChangeAmount, 
-        int wanderOffset, float stateChangeDelay, Transform myTrasform, Func<Vector3, Vector3> ReturnNodePos, Action<Vector3, bool> FollowPath, Action<Vector3> View)
+    public IdleState(IdleStateParameter parameter)
     {
-        this.SetState = SetState;
-        this.IsTargetInSight = IsTargetInSight;
+        SetState = parameter.SetState;
+        IsTargetInSight = parameter.IsTargetInSight;
 
-        WanderingFSM wanderingFSM = new WanderingFSM(ReturnNodePos, View, FollowPath, myTrasform, wanderOffset);
+        WanderingFSM wanderingFSM = new WanderingFSM(
+            parameter.ReturnNodePos, parameter.View, parameter.FollowPath, parameter.myTrasform, parameter.wanderOffset);
         ChangeToRandomState changeState = new ChangeToRandomState(wanderingFSM.FSM.SetState);
 
         _bt = new Tree();
@@ -32,14 +32,14 @@ public class IdleState : State
             (
                 new List<Node>()
                 {
-                    new ChangeAngleOfSight(captureTransform, angleOffset, angleChangeAmount),
+                    new ChangeAngleOfSight(parameter.captureTransform, parameter.angleOffset, parameter.angleChangeAmount),
                     wanderingFSM,
 
                     new Sequencer
                     (
                         new List<Node>()
                         {
-                            new WaitForStateChange(stateChangeDelay),
+                            new WaitForStateChange(parameter.stateChangeDelay),
                             changeState,
                             // Wander에 이벤트를 보내는 방식으로 방향을 돌려준다.
                         }

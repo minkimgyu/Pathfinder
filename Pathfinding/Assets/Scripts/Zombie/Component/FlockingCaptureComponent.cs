@@ -10,7 +10,7 @@ public class FlockingCaptureComponent : MovableTargetCaptureComponent<IFlockingT
     {
         for (int i = 0; i < _capturedTargets.Count; i++)
         {
-            if (_capturedTargets[i].IsLeaderState())
+            if (_capturedTargets[i].IsLeader())
             {
                 _flockingTarget = _capturedTargets[i];
             }

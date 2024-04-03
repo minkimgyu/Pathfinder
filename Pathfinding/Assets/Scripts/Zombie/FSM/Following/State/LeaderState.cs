@@ -13,13 +13,13 @@ public class LeaderState : State
     Action<Vector3, bool> FollowPath;
     Func<ITarget> ReturnTargetInSight;
 
-    Func<bool> HaveLeaderTargetInNearRange;
+    Func<ITarget, bool> HaveLeaderInNearRange;
 
-    public LeaderState(Action<FollowFSM.State> SetState, Func<bool> HaveLeaderTargetInNearRange, 
+    public LeaderState(Action<FollowFSM.State> SetState, Func<ITarget, bool> HaveLeaderInNearRange, 
         Func<ITarget> ReturnTargetInSight, Action<Vector3, bool> FollowPath)
     {
         this.SetState = SetState;
-        this.HaveLeaderTargetInNearRange = HaveLeaderTargetInNearRange;
+        this.HaveLeaderInNearRange = HaveLeaderInNearRange;
         this.ReturnTargetInSight = ReturnTargetInSight;
 
         this.FollowPath = FollowPath;
@@ -27,8 +27,9 @@ public class LeaderState : State
 
     public override void CheckStateChange()
     {
-        bool nowHave = HaveLeaderTargetInNearRange();
-        if (nowHave == false) SetState?.Invoke(FollowFSM.State.Flocking);
+        ITarget target = ReturnTargetInSight();
+        bool nowHave = HaveLeaderInNearRange(target);
+        if (nowHave == true) SetState?.Invoke(FollowFSM.State.Flocking);
     }
 
     public override void OnStateUpdate()

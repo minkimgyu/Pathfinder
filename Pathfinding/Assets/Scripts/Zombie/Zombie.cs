@@ -51,13 +51,13 @@ namespace AI
 
         private void Start() => Invoke("Initialize", 1);
 
-        protected void Initialize()
+        void Initialize()
         {
             GridManager gridManager = FindObjectOfType<GridManager>();
             Pathfinder pathfinder = FindObjectOfType<Pathfinder>();
 
-            ViewCaptureComponent captureComponent = GetComponentInChildren<ViewCaptureComponent>();
-            captureComponent.Initialize(_targetCaptureRadius, _targetCaptureAngle);
+            _captureComponent = GetComponentInChildren<ViewCaptureComponent>();
+            _captureComponent.Initialize(_targetCaptureRadius, _targetCaptureAngle);
 
             NoiseListener noiseListener = GetComponentInChildren<NoiseListener>();
             noiseListener.Initialize(_noiseCaptureRadius, _maxNoiseQueueSize, OnNoiseReceived);
@@ -70,19 +70,26 @@ namespace AI
             RouteTrackingComponent routeTrackingComponent = GetComponent<RouteTrackingComponent>();
             routeTrackingComponent.Initialize(_pathFindDelay, moveComponent.Move, viewComponent.View, pathfinder.FindPath, ResetAnimatorBool);
 
-            _targetFollowingState = new TargetFollowingState(SetState, captureComponent.ModifyCaptureRadius, _targetCaptureAdditiveRadius, captureComponent.IsTargetInSight,
-                transform, captureComponent.ReturnTargetInSight, _canAttackRange, _delayForNextAttack, _attackPoint, _attackRadius, _attackLayer, routeTrackingComponent.FollowPath,
-                ResetAnimatorTrigger, ResetAnimatorBool);
+            IdleStateParameter idleStateParameter = new IdleStateParameter(
+                 _angleOffset, _angleChangeAmount, _wanderOffset, _stateChangeDelay, _captureComponent.transform, transform, SetState,
+                 routeTrackingComponent.FollowPath, viewComponent.View, _captureComponent.IsTargetInSight, gridManager.ReturnNodePos);
+
+            NoiseTrackingStateParameter noiseTrackingStateParameter = new NoiseTrackingStateParameter(
+                SetState, noiseListener.ClearAllNoise, routeTrackingComponent.FollowPath, _captureComponent.IsTargetInSight,
+                noiseListener.IsQueueEmpty, noiseListener.ReturnFrontNoise, routeTrackingComponent.IsFollowingFinish);
+
+            TargetFollowingStateParameter targetFollowingStateParameter = new TargetFollowingStateParameter(
+                _targetCaptureAdditiveRadius, _canAttackRange, _delayForNextAttack, _canAttackRange, _attackLayer,
+                _attackPoint, transform, SetState, _captureComponent.ModifyCaptureRadius, routeTrackingComponent.FollowPath,
+                ResetAnimatorTrigger, ResetAnimatorBool, _captureComponent.IsTargetInSight, _captureComponent.ReturnTargetInSight);
+
+            _targetFollowingState = new TargetFollowingState(targetFollowingStateParameter);
 
             Dictionary<State, BaseState> states = new Dictionary<State, BaseState>
             {
-                {State.Idle, new IdleState(SetState, captureComponent.transform, captureComponent.IsTargetInSight, _angleOffset, _angleChangeAmount, 
-                _wanderOffset, _stateChangeDelay, transform, gridManager.ReturnNodePos, routeTrackingComponent.FollowPath, viewComponent.View) },
-
-                {State.TargetFollowing, _targetFollowingState },
-
-                {State.NoiseTracking, new NoiseTrackingState(SetState, captureComponent.IsTargetInSight, noiseListener.IsQueueEmpty, noiseListener.ClearAllNoise, 
-                noiseListener.ReturnFrontNoise, routeTrackingComponent.FollowPath, routeTrackingComponent.IsFollowingFinish) }
+                {State.Idle, new IdleState(idleStateParameter) },
+                {State.NoiseTracking, new NoiseTrackingState(noiseTrackingStateParameter) },
+                {State.TargetFollowing, _targetFollowingState }
             };
 
             _fsm.Initialize(states);
@@ -91,8 +98,6 @@ namespace AI
 
         void ResetAnimatorTrigger(string triggerName) { _animator.SetTrigger(triggerName); }
         void ResetAnimatorBool(string boolName, bool value) { _animator.SetBool(boolName, value); }
-
-        public FollowFSM.State ReturnFollowState() { return _targetFollowingState.ReturnFollowState(); }
 
         void SetState(State state)
         {
@@ -117,15 +122,14 @@ namespace AI
         public Transform ReturnTransform() { return transform; }
         public Vector3 ReturnPos() { return transform.position; }
 
-        public bool IsLeaderState()
+        public bool IsLeader(ITarget target)
         {
-            throw new System.NotImplementedException();
-        }
+            if (_fsm.ReturnCurrentState() != State.TargetFollowing) return false;
 
-        public bool HasSameGoal()
-        {
-            _fsm.ReturnCurrentState() == 
-            throw new System.NotImplementedException();
+            FollowFSM.State state = _targetFollowingState.ReturnFollowState();
+            ITarget capturedTarget = _captureComponent.ReturnTargetInSight();
+
+            return state == FollowFSM.State.Leader && capturedTarget == target;
         }
     }
 }

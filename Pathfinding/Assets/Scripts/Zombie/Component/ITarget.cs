@@ -26,10 +26,5 @@ public interface IFlockingTarget : ITarget
     /// <summary>
     /// FollowFSM의 State가 Leader인 경우
     /// </summary>
-    bool IsLeaderState();
-
-    /// <summary>
-    /// 같은 State인 경우
-    /// </summary>
-    bool HasSameGoal();
+    bool IsLeader(ITarget target);
 }

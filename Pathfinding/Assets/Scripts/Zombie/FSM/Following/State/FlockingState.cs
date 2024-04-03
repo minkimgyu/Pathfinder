@@ -13,10 +13,11 @@ public class FlockingState : State
     Transform _myTransform;
     Action<Vector3> View, Move;
 
-    Func<bool> HaveLeaderTargetInNearRange;
+    Func<ITarget, bool> HaveLeaderTargetInNearRange;
 
     Action<FollowFSM.State> SetState;
-    Func<IFlockingTarget> ReturnLeaderTarget;
+
+    Func<ITarget> ReturnTargetInSight;
 
     float _speed;
 
@@ -25,22 +26,22 @@ public class FlockingState : State
     FollowBehavior _followBehavior;
 
     public FlockingState(Transform myTransform, float speed, Action<FollowFSM.State> SetState, 
-        Func<bool> HaveLeaderTargetInNearRange, Func<IFlockingTarget> ReturnLeaderTarget,
-        Func<List<IFlockingTarget>> ReturnNearTargets, Action<Vector3> View, Action<Vector3> Move)
+        Func<ITarget, bool> HaveLeaderTargetInNearRange, Func<List<IFlockingTarget>> ReturnNearFlockingTargets,
+        Func<ITarget> ReturnTargetInSight, Action<Vector3> View, Action<Vector3> Move)
     {
+        this.ReturnTargetInSight = ReturnTargetInSight;
+
         this.SetState = SetState;
         _myTransform = myTransform;
         _speed = speed;
-
-        this.ReturnLeaderTarget = ReturnLeaderTarget;
 
         this.View = View;
         this.Move = Move;
         this.HaveLeaderTargetInNearRange = HaveLeaderTargetInNearRange;
 
-        _behaviors.Add(new AlignmentBehavior(_myTransform, 1, ReturnNearTargets));
-        _behaviors.Add(new CohesionBehavior(_myTransform, 1, ReturnNearTargets));
-        _behaviors.Add(new SeparationBehavior(_myTransform, 1, ReturnNearTargets));
+        _behaviors.Add(new AlignmentBehavior(_myTransform, 1, ReturnNearFlockingTargets));
+        _behaviors.Add(new CohesionBehavior(_myTransform, 1, ReturnNearFlockingTargets));
+        _behaviors.Add(new SeparationBehavior(_myTransform, 1, ReturnNearFlockingTargets));
 
         _followBehavior = new FollowBehavior(_myTransform, 1);
         _behaviors.Add(_followBehavior);
@@ -48,7 +49,8 @@ public class FlockingState : State
 
     public override void CheckStateChange()
     {
-        bool nowHave = HaveLeaderTargetInNearRange();
+        ITarget target = ReturnTargetInSight();
+        bool nowHave = HaveLeaderTargetInNearRange(target);
         if (nowHave == false) SetState?.Invoke(FollowFSM.State.Leader);
     }
 
@@ -56,7 +58,7 @@ public class FlockingState : State
     {
         Vector3 velocity = Vector3.zero;
 
-        IFlockingTarget target = ReturnLeaderTarget();
+        IFlockingTarget target = ReturnLeaderTarget(); // ReturnNearTargets 여기에서 따로 분류해서 받기
         if (target == null) return;
 
         _followBehavior.ResetData(target);
